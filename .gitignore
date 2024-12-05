@@ -28,7 +28,3 @@ netlify.toml
 # فایل‌های سیستم‌عامل
 .DS_Store
 Thumbs.db
-
-# فایل‌های مربوط به قفل وابستگی‌ها (اختیاری)
-package-lock.json
-yarn.lock
