@@ -1,0 +1,34 @@
+# پوشه‌های تولید شده
+node_modules/
+dist/
+build/
+
+# فایل‌های محیط و پیکربندی محلی
+.env
+.env.local
+.env.*.local
+
+# کش‌ها و فایل‌های موقت
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# خروجی‌های تست
+coverage/
+
+# خروجی ESLint
+.eslintcache
+
+# خروجی‌های سرویس‌دهندگان مختلف (مانند Netlify)
+netlify.toml
+
+# فایل‌های سیستم‌عامل
+.DS_Store
+Thumbs.db
+
+# فایل‌های مربوط به قفل وابستگی‌ها (اختیاری)
+package-lock.json
+yarn.lock
