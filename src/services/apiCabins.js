@@ -1,16 +1,15 @@
 import supabase, { supabaseUrl } from "./supabase";
-import axios from "axios";
 import {ENDPOINTS} from "../utils/constants.js";
+import axios from "axios";
 
 export async function getCabins() {
-  const { data, error } = await supabase.from("cabins").select("*");
-
-  if (error) {
-    console.error(error);
+  try {
+    const response = await axios.get(ENDPOINTS.GET_CABINS);
+    return response.data.cabins;
+  } catch (error) {
+    console.error("Error loading cabins:", error);
     throw new Error("Cabins could not be loaded");
   }
-
-  return data;
 }
 
 export async function createEditCabin(newCabin, id) {
@@ -74,14 +73,3 @@ export async function deleteCabin(id) {
     throw new Error("Cabin could not be deleted");
   }
 }
-
-// export async function deleteCabin(id) {
-//   const { data, error } = await supabase.from("cabins").delete().eq("id", id);
-//
-//   if (error) {
-//     console.error(error);
-//     throw new Error("Cabin could not be deleted");
-//   }
-//
-//   return data;
-// }
