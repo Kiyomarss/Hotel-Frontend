@@ -9,6 +9,7 @@ import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
+import {API_BASE} from "../../utils/constants.js";
 
 // const TableRow = styled.div`
 //   display: grid;
@@ -59,9 +60,11 @@ function CabinRow({ cabin }) {
     maxCapacity,
     regularPrice,
     discount,
-    image,
+    imagePath,
     description,
   } = cabin;
+
+  const fullImagePath = `${API_BASE}${imagePath}`;
 
   function handleDuplicate() {
     createCabin({
@@ -69,14 +72,14 @@ function CabinRow({ cabin }) {
       maxCapacity,
       regularPrice,
       discount,
-      image,
+      fullImagePath,
       description,
     });
   }
 
   return (
     <Table.Row>
-      <Img src={image} />
+      <Img src={fullImagePath} alt="Cabin Image" />
       <Cabin>{name}</Cabin>
       <div>Fits up to {maxCapacity} guests</div>
       <Price>{formatCurrency(regularPrice)}</Price>

@@ -9,6 +9,7 @@ import FormRow from "../../ui/FormRow";
 
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
+import {API_BASE} from "../../utils/constants.js";
 
 function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { isCreating, createCabin } = useCreateCabin();
@@ -24,32 +25,29 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { errors } = formState;
 
   function onSubmit(data) {
-    const image = typeof data.image === "string" ? data.image : data.image[0];
+    const formData = new FormData();
 
-    if (isEditSession)
-      editCabin(
-        { newCabinData: { ...data, image }, id: editId },
-        {
-          onSuccess: (data) => {
-            reset();
-            onCloseModal?.();
-          },
-        }
-      );
-    else
-      createCabin(
-        { ...data, image: image },
-        {
-          onSuccess: (data) => {
-            reset();
-            onCloseModal?.();
-          },
-        }
-      );
+    if (isEditSession) formData.append("id", editId);
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "image" && value?.[0]) {
+        formData.append(key, value[0]);
+      } else if (value) {
+        formData.append(key, value);
+      }
+    });
+
+    const action = isEditSession ? editCabin : createCabin;
+    action(formData, {
+      onSuccess: () => {
+        reset();
+        onCloseModal?.();
+      },
+    });
   }
 
   function onError(errors) {
-    // console.log(errors);
+    console.log(errors);
   }
 
   return (
@@ -129,13 +127,23 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
       </FormRow>
 
       <FormRow label="Cabin photo">
-        <FileInput
-          id="image"
-          accept="image/*"
-          {...register("image", {
-            required: isEditSession ? false : "This field is required",
-          })}
-        />
+        <div>
+          <FileInput
+              id="image"
+              accept="image/*"
+              multiple={false}
+              {...register("image", {
+                required: isEditSession ? false : "This field is required",
+              })}
+          />
+          {isEditSession && editValues?.imagePath && (
+              <img
+                  src={`${API_BASE}${editValues.imagePath}`}
+                  alt="Current Cabin"
+                  style={{ width: "100px", marginTop: "10px" }}
+              />
+          )}
+        </div>
       </FormRow>
 
       <FormRow>
