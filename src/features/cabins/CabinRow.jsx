@@ -9,7 +9,7 @@ import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
-import {API_BASE} from "../../utils/constants.js";
+import {BASE_API_URL} from "../../utils/constants.js";
 
 // const TableRow = styled.div`
 //   display: grid;
@@ -63,23 +63,23 @@ function CabinRow({ cabin }) {
     imagePath,
     description,
   } = cabin;
-
-  const fullImagePath = `${API_BASE}${imagePath}`;
-
+  
   function handleDuplicate() {
-    createCabin({
-      name: `Copy of ${name}`,
-      maxCapacity,
-      regularPrice,
-      discount,
-      fullImagePath,
-      description,
-    });
+    const formData = new FormData();
+    formData.append("name", `Copy of ${name}`);
+    formData.append("maxCapacity", maxCapacity);
+    formData.append("regularPrice", regularPrice);
+    formData.append("discount", discount || 0);
+    formData.append("imagePath", imagePath);
+    formData.append("description", description);
+    formData.append("isEdit", false);
+
+    createCabin(formData);
   }
 
   return (
     <Table.Row>
-      <Img src={fullImagePath} alt="Cabin Image" />
+      <Img src={`${BASE_API_URL}${imagePath}`} alt="Cabin Image" />
       <Cabin>{name}</Cabin>
       <div>Fits up to {maxCapacity} guests</div>
       <Price>{formatCurrency(regularPrice)}</Price>

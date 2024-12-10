@@ -1,9 +1,10 @@
 import {ENDPOINTS} from "../utils/constants.js";
 import axios from "axios";
+import axiosInstance from "./axiosInstance.js";
 
 export async function getCabins() {
   try {
-    const response = await axios.get(ENDPOINTS.GET_CABINS);
+    const response = await axiosInstance.get(ENDPOINTS.GET_CABINS);
     return response.data.cabins;
   } catch (error) {
     console.error("Error loading cabins:", error);
@@ -14,10 +15,11 @@ export async function getCabins() {
 export async function createEditCabin(newCabin) {
   try {
     const isEditSession = Boolean(newCabin.get("id"));
+    const method = isEditSession ? "put" : "post";
     const url = isEditSession ? ENDPOINTS.EDIT_CABIN : ENDPOINTS.CREATE_CABIN;
-    
-    const response = await axios({
-      method: isEditSession ? "put" : "post",
+
+    const response = await axiosInstance({
+      method,
       url,
       data: newCabin,
     });
@@ -25,18 +27,16 @@ export async function createEditCabin(newCabin) {
     return response.data;
   } catch (error) {
     console.error("Error while creating or editing cabin:", error);
-        throw new Error("Operation could not be completed");
+    throw new Error("Operation could not be completed");
   }
 }
 
 export async function deleteCabin(id) {
   try {
-    const response = await axios({
-      method: 'delete',
-      url: ENDPOINTS.DELETE_CABIN,
+    const response = await axiosInstance.delete(ENDPOINTS.DELETE_CABIN, {
       data: { id },
     });
-    
+
     return response.data;
   } catch (error) {
     console.error("Error deleting cabin:", error);

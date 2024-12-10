@@ -9,7 +9,7 @@ import FormRow from "../../ui/FormRow";
 
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
-import {API_BASE} from "../../utils/constants.js";
+import {BASE_API_URL} from "../../utils/constants.js";
 
 function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { isCreating, createCabin } = useCreateCabin();
@@ -24,10 +24,9 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   });
   const { errors } = formState;
 
-  function onSubmit(data) {
+  function createFormData(data, editId) {
     const formData = new FormData();
-
-    if (isEditSession) formData.append("id", editId);
+    if (editId) formData.append("id", editId);
 
     Object.entries(data).forEach(([key, value]) => {
       if (key === "image" && value?.[0]) {
@@ -36,7 +35,12 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
         formData.append(key, value);
       }
     });
+    
+    return formData;
+  }
 
+  function onSubmit(data) {
+    const formData = createFormData(data, isEditSession ? editId : null);
     const action = isEditSession ? editCabin : createCabin;
     action(formData, {
       onSuccess: () => {
@@ -138,7 +142,7 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
           />
           {isEditSession && editValues?.imagePath && (
               <img
-                  src={`${API_BASE}${editValues.imagePath}`}
+                  src={`${BASE_API_URL}${editValues.imagePath}`}
                   alt="Current Cabin"
                   style={{ width: "100px", marginTop: "10px" }}
               />
