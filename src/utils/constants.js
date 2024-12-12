@@ -7,5 +7,7 @@ export const ENDPOINTS = {
     GET_CABINS: '/Cabins/GetCabins',
     CREATE_CABIN: '/Cabins/Create',
     EDIT_CABIN: '/Cabins/Edit',
+    GET_SETTINGS: '/Settings/GetSettings',
+    EDIT_SETTINGS: '/Settings/Edit',
 };
 

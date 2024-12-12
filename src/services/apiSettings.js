@@ -1,27 +1,22 @@
-import supabase from "./supabase";
+import { ENDPOINTS } from "../utils/constants.js";
+import axiosInstance from "./axiosInstance.js";
 
 export async function getSettings() {
-  const { data, error } = await supabase.from("settings").select("*").single();
-
-  if (error) {
-    console.error(error);
+  try {
+    const response = await axiosInstance.get(ENDPOINTS.GET_SETTINGS);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading settings:", error);
     throw new Error("Settings could not be loaded");
   }
-  return data;
 }
 
-// We expect a newSetting object that looks like {setting: newValue}
-export async function updateSetting(newSetting) {
-  const { data, error } = await supabase
-    .from("settings")
-    .update(newSetting)
-    // There is only ONE row of settings, and it has the ID=1, and so this is the updated one
-    .eq("id", 1)
-    .single();
-
-  if (error) {
-    console.error(error);
+export async function updateSettings(newSetting) {
+  try {
+    const response = await axiosInstance.put(ENDPOINTS.EDIT_SETTINGS, newSetting);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating settings:", error);
     throw new Error("Settings could not be updated");
   }
-  return data;
 }

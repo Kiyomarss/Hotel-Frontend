@@ -2,73 +2,77 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import Spinner from "../../ui/Spinner";
-import { useSettings } from "./useSettings";
-import { useUpdateSetting } from "./useUpdateSetting";
+import { useSettings } from "./useSettings.js";
+import { useUpdateSettings } from "./useUpdateSettings.js";
+import Button from "../../ui/Button.jsx";
 
 function UpdateSettingsForm() {
-  const {
-    isLoading,
-    settings: {
-      minBookingLength,
-      maxBookingLength,
-      maxGuestsPerBooking,
-      breakfastPrice,
-    } = {},
-  } = useSettings();
-  const { isUpdating, updateSetting } = useUpdateSetting();
+    const { isLoading, settings } = useSettings();
+    const { isUpdating, updateSetting } = useUpdateSettings();
 
-  if (isLoading) return <Spinner />;
+    if (isLoading) return <Spinner />;
+    
+    const { minBookingLength, maxBookingLength, maxGuestsPerBooking, breakfastPrice } =
+    settings.data;
+    function handleSubmit(event) {
+        event.preventDefault();
 
-  function handleUpdate(e, field) {
-    const { value } = e.target;
+        const formData = new FormData(event.target);
+        const updatedSettings = {
+            minBookingLength: parseInt(formData.get("min-nights"), 10),
+            maxBookingLength: parseInt(formData.get("max-nights"), 10),
+            maxGuestsPerBooking: parseInt(formData.get("max-guests"), 10),
+            breakfastPrice: parseInt(formData.get("breakfast-price"), 10),
+        };
 
-    if (!value) return;
-    updateSetting({ [field]: value });
-  }
+        updateSetting(updatedSettings);
+    }
+
 
   return (
-    <Form>
-      <FormRow label="Minimum nights/booking">
-        <Input
-          type="number"
-          id="min-nights"
-          defaultValue={minBookingLength}
-          disabled={isUpdating}
-          onBlur={(e) => handleUpdate(e, "minBookingLength")}
-        />
-      </FormRow>
+      <Form onSubmit={handleSubmit}>
+        <FormRow label="Minimum nights/booking">
+          <Input
+              name="min-nights"
+              type="number"
+              defaultValue={minBookingLength}
+              disabled={isUpdating}
+          />
+        </FormRow>
 
-      <FormRow label="Maximum nights/booking">
-        <Input
-          type="number"
-          id="max-nights"
-          defaultValue={maxBookingLength}
-          disabled={isUpdating}
-          onBlur={(e) => handleUpdate(e, "maxBookingLength")}
-        />
-      </FormRow>
+        <FormRow label="Maximum nights/booking">
+          <Input
+              name="max-nights"
+              type="number"
+              defaultValue={maxBookingLength}
+              disabled={isUpdating}
+          />
+        </FormRow>
 
-      <FormRow label="Maximum guests/booking">
-        <Input
-          type="number"
-          id="max-guests"
-          defaultValue={maxGuestsPerBooking}
-          disabled={isUpdating}
-          onBlur={(e) => handleUpdate(e, "maxGuestsPerBooking")}
-        />
-      </FormRow>
+        <FormRow label="Maximum guests/booking">
+          <Input
+              name="max-guests"
+              type="number"
+              defaultValue={maxGuestsPerBooking}
+              disabled={isUpdating}
+          />
+        </FormRow>
 
-      <FormRow label="Breakfast price">
-        <Input
-          type="number"
-          id="breakfast-price"
-          defaultValue={breakfastPrice}
-          disabled={isUpdating}
-          onBlur={(e) => handleUpdate(e, "breakfastPrice")}
-        />
-      </FormRow>
-    </Form>
+        <FormRow label="Breakfast price">
+          <Input
+              name="breakfast-price"
+              type="number"
+              defaultValue={breakfastPrice}
+              disabled={isUpdating}
+          />
+        </FormRow>
+
+        <FormRow>
+          <Button disabled={isUpdating}>Update</Button>
+        </FormRow>
+      </Form>
   );
+
 }
 
 export default UpdateSettingsForm;
