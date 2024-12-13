@@ -4,6 +4,7 @@ export const BASE_API_URL = import.meta.env.VITE_API_BASE || 'http://localhost:5
 
 export const ENDPOINTS = {
     DELETE_CABIN: 'Cabins/Delete',
+    DELETE_BOOKING: 'Bookings/Delete',
     GET_CABINS: 'Cabins/GetCabins',
     CREATE_CABIN: 'Cabins/Create',
     EDIT_CABIN: 'Cabins/Edit',

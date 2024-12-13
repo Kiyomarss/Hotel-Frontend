@@ -33,11 +33,9 @@ export async function createEditCabin(newCabin) {
 
 export async function deleteCabin(id) {
   try {
-    const response = await axiosInstance.delete(ENDPOINTS.DELETE_CABIN, {
-      data: { id },
-    });
+    const response = await axiosInstance.delete(`${ENDPOINTS.DELETE_CABIN}/${id}`);
 
-    return response.data;
+    return response.data.isDeleted;
   } catch (error) {
     console.error("Error deleting cabin:", error);
     throw new Error("Cabin could not be deleted");

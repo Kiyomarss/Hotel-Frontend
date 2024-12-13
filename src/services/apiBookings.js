@@ -136,12 +136,14 @@ export async function updateBooking(id, obj) {
   }
 }
 
-export async function deleteBooking(id) {
-  const { data, error } = await supabase.from("bookings").delete().eq("id", id);
 
-  if (error) {
-    console.error(error);
+export async function deleteBooking(id) {
+  try {
+    const response = await axiosInstance.delete(`${ENDPOINTS.DELETE_BOOKING}/${id}`);
+
+    return response.data.isDeleted;
+  } catch (error) {
+    console.error("Error deleting Booking:", error);
     throw new Error("Booking could not be deleted");
   }
-  return data;
 }
