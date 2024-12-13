@@ -1,6 +1,7 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
-import { PAGE_SIZE } from "../utils/constants";
+import {ENDPOINTS, PAGE_SIZE} from "../utils/constants";
+import axiosInstance from "./axiosInstance.js";
 
 export async function getBookings({ filter, sortBy, page }) {
   let query = supabase
@@ -105,22 +106,37 @@ export async function getStaysTodayActivity() {
 }
 
 export async function updateBooking(id, obj) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .update(obj)
-    .eq("id", id)
-    .select()
-    .single();
+  try {
+    const patchDoc = Object.keys(obj).map((key) => ({
+      op: "replace",
+      path: `/${key}`,
+      value: obj[key],
+    }));
+    
+    const response = await axiosInstance.patch(
+        `${ENDPOINTS.UPDATE_BOOKING}/${id}`,
+        patchDoc,
+        {
+          headers: {
+            "Content-Type": "application/json-patch+json",
+          },
+        }
+    );
+    
+    return response.data.Booking;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      const errorMessage = error.response.data.Message || "Booking could not be updated";
+      console.error("Error from server:", errorMessage);
+      throw new Error(errorMessage);
+    }
 
-  if (error) {
-    console.error(error);
-    throw new Error("Booking could not be updated");
+    console.error("Error while updating booking:", error);
+    throw new Error(error.message || "An error occurred while updating booking");
   }
-  return data;
 }
 
 export async function deleteBooking(id) {
-  // REMEMBER RLS POLICIES
   const { data, error } = await supabase.from("bookings").delete().eq("id", id);
 
   if (error) {
