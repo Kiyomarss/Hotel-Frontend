@@ -34,9 +34,9 @@ function BookingDetail() {
   const navigate = useNavigate();
 
   if (isLoading) return <Spinner />;
-  if (!booking) return <Empty resourceName="booking" />;
+  if (!booking.data) return <Empty resourceName="booking" />;
 
-  const { status, id: bookingId } = booking;
+  const { status, id: bookingId } = booking.data;
 
   const statusToTagName = {
     unconfirmed: "blue",
@@ -54,7 +54,7 @@ function BookingDetail() {
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
 
-      <BookingDataBox booking={booking} />
+      <BookingDataBox booking={booking.data} />
 
       <ButtonGroup>
         {status === "unconfirmed" && (

@@ -1,108 +1,98 @@
-import { getToday } from "../utils/helpers";
-import supabase from "./supabase";
 import {ENDPOINTS, PAGE_SIZE} from "../utils/constants";
 import axiosInstance from "./axiosInstance.js";
 
 export async function getBookings({ filter, sortBy, page }) {
-  let query = supabase
-    .from("bookings")
-    .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, cabins(name), guests(fullName, email)",
-      { count: "exact" }
-    );
+  try {
+    const params = {};
 
-  // FILTER
-  if (filter) query = query[filter.method || "eq"](filter.field, filter.value);
+    if (filter) {
+      params[filter.field] = filter.value;
+    }
 
-  // SORT
-  if (sortBy)
-    query = query.order(sortBy.field, {
-      ascending: sortBy.direction === "asc",
-    });
+    if (sortBy) {
+      params.sortBy = sortBy.field;
+      params.sortDirection = sortBy.direction || "asc";
+    }
 
-  if (page) {
-    const from = (page - 1) * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
-    query = query.range(from, to);
-  }
+    if (page) {
+      params.page = page;
+      params.pageSize = PAGE_SIZE;
+    }
 
-  const { data, error, count } = await query;
+    const response = await axiosInstance.get(ENDPOINTS.GET_BOOKINGS, { params });
 
-  if (error) {
-    console.error(error);
+    return {
+      data: response.data.bookings, 
+      count: response.data.totalCount, 
+    };
+  } catch (error) {
+    console.error("Error loading bookings:", error);
     throw new Error("Bookings could not be loaded");
   }
-
-  return { data, count };
 }
 
 export async function getBooking(id) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*, cabins(*), guests(*)")
-    .eq("id", id)
-    .single();
+  try {
+    const response = await axiosInstance.get(`${ENDPOINTS.GET_BOOKING}/${id}`);
 
-  if (error) {
-    console.error(error);
-    throw new Error("Booking not found");
+    if (response.data.data && response.data.data) {
+      return { data : response.data.data};
+    } else {
+      throw new Error("Booking not found");
+    }
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    throw new Error(error.response?.data?.data.Message || "An error occurred while fetching the booking");
   }
-
-  return data;
 }
 
-// Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
-// date: ISOString
 export async function getBookingsAfterDate(date) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("created_at, totalPrice, extrasPrice")
-    .gte("created_at", date)
-    .lte("created_at", getToday({ end: true }));
+  try {
+    const response = await axiosInstance.get(`${ENDPOINTS.GET_BOOKINGS_AFTER_DATE}`, {
+      params: { date },
+    });
 
-  if (error) {
-    console.error(error);
-    throw new Error("Bookings could not get loaded");
+    if (response.data.data && response.data.data) {
+      return { data : response.data.data};
+    } else {
+      throw new Error("No bookings found");
+    }
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    throw new Error(error.response?.data?.data.Message || "An error occurred while fetching bookings");
   }
-
-  return data;
 }
 
-// Returns all STAYS that are were created after the given date
 export async function getStaysAfterDate(date) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*, guests(fullName)")
-    .gte("startDate", date)
-    .lte("startDate", getToday());
+  try {
+    const response = await axiosInstance.get(`${ENDPOINTS.GET_STAYS_AFTER_DATE}`, {
+      params: { date },
+    });
 
-  if (error) {
-    console.error(error);
-    throw new Error("Bookings could not get loaded");
+    if (response.data.data && response.data.data) {
+      return { data : response.data.data};
+    } else {
+      throw new Error("No stays found");
+    }
+  } catch (error) {
+    console.error("Error fetching stays:", error);
+    throw new Error(error.response?.data?.data.Message || "An error occurred while fetching stays");
   }
-
-  return data;
 }
 
-// Activity means that there is a check in or a check out today
 export async function getStaysTodayActivity() {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*, guests(fullName, nationality, countryFlag)")
-    .or(
-      `and(status.eq.unconfirmed),and(status.eq.checked-in)`
-    )
-    .order("created_at");
+  try {
+    const response = await axiosInstance.get(ENDPOINTS.GET_STAYS_AFTER_DATE);
 
-  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
-  // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
-  // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
-
-  if (error) {
-    console.error(error);
-    throw new Error("Bookings could not get loaded");
+    if (response.data.data && response.data.data) {
+      return { data : response.data.data};
+    } else {
+      throw new Error("No Bookings found");
+    }
+  } catch (error) {
+    console.error("Error fetching stays:", error);
+    throw new Error(error.response?.data?.data.Message || "An error occurred while fetching stays");
   }
-  return data;
 }
 
 export async function updateBooking(id, obj) {
@@ -123,7 +113,7 @@ export async function updateBooking(id, obj) {
         }
     );
     
-    return response.data.Booking;
+    return response.data.booking;
   } catch (error) {
     if (error.response && error.response.data) {
       const errorMessage = error.response.data.Message || "Booking could not be updated";

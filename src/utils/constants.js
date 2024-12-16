@@ -11,5 +11,10 @@ export const ENDPOINTS = {
     GET_SETTINGS: 'Settings/GetSettings',
     EDIT_SETTINGS: 'Settings/Edit',
     UPDATE_BOOKING: 'Bookings/UpdateBooking',
+    GET_BOOKINGS: 'Bookings/GetBookings',
+    GET_BOOKING: 'Bookings/GetBooking',
+    GET_BOOKINGS_AFTER_DATE: 'Bookings/GetBookingsAfterDate',
+    GET_STAYS_AFTER_DATE: 'Bookings/GetStaysAfterDate',
+    GET_STAYS_TODAY_ACTIVITY: 'Bookings/GetStaysTodayActivity',
 };
 

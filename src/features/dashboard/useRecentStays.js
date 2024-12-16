@@ -11,12 +11,12 @@ export function useRecentStays() {
     : Number(searchParams.get("last"));
   const queryDate = subDays(new Date(), numDays).toISOString();
 
-  const { isLoading, data: stays } = useQuery({
+  const { isLoading, data: stays= [] } = useQuery({
     queryFn: () => getStaysAfterDate(queryDate),
     queryKey: ["stays", `last-${numDays}`],
   });
 
-  const confirmedStays = stays?.filter(
+  const confirmedStays = stays.data?.filter(
     (stay) => stay.status === "checked-in" || stay.status === "checked-out"
   );
 

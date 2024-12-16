@@ -26,7 +26,7 @@ export function useBookings() {
   // QUERY
   const {
     isLoading,
-    data: { data: bookings, count } = {},
+    data: { data: bookings= [], count } = {},
     error,
   } = useQuery({
     queryKey: ["bookings", filter, sortBy, page],

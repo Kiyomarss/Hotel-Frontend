@@ -50,9 +50,9 @@ function TodayActivity() {
       </Row>
 
       {!isLoading ? (
-        activities?.length > 0 ? (
+        activities.data?.length > 0 ? (
           <TodayList>
-            {activities.map((activity) => (
+            {activities.data.map((activity) => (
               <TodayItem activity={activity} key={activity.id} />
             ))}
           </TodayList>
