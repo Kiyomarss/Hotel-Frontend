@@ -35,8 +35,8 @@ export async function getBooking(id) {
   try {
     const response = await axiosInstance.get(`${ENDPOINTS.GET_BOOKING}/${id}`);
 
-    if (response.data.data && response.data.data) {
-      return { data : response.data.data};
+    if (response.data.booking) {
+      return response.data.booking;
     } else {
       throw new Error("Booking not found");
     }
@@ -52,8 +52,8 @@ export async function getBookingsAfterDate(date) {
       params: { date },
     });
 
-    if (response.data.data && response.data.data) {
-      return { data : response.data.data};
+    if (response.data.bookings) {
+      return response.data.bookings;
     } else {
       throw new Error("No bookings found");
     }
@@ -69,8 +69,8 @@ export async function getStaysAfterDate(date) {
       params: { date },
     });
 
-    if (response.data.data && response.data.data) {
-      return { data : response.data.data};
+    if (response.data.bookings) {
+      return response.data.bookings;
     } else {
       throw new Error("No stays found");
     }
@@ -84,8 +84,8 @@ export async function getStaysTodayActivity() {
   try {
     const response = await axiosInstance.get(ENDPOINTS.GET_STAYS_AFTER_DATE);
 
-    if (response.data.data && response.data.data) {
-      return { data : response.data.data};
+    if (response.data.bookings) {
+      return response.data.bookings;
     } else {
       throw new Error("No Bookings found");
     }

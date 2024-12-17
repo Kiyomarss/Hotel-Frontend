@@ -30,7 +30,7 @@ function CheckinBooking() {
   const { booking, isLoading } = useBooking();
   const { settings, isLoading: isLoadingSettings } = useSettings();
 
-  useEffect(() => setConfirmPaid(booking.data?.isPaid ?? false), [booking.data]);
+  useEffect(() => setConfirmPaid(booking?.isPaid ?? false), [booking]);
 
   const moveBack = useMoveBack();
   const { checkin, isCheckingIn } = useCheckin();
@@ -44,7 +44,7 @@ function CheckinBooking() {
     numGuests,
     hasBreakfast,
     numNights,
-  } = booking.data;
+  } = booking;
 
   const optionalBreakfastPrice =
     6 * numNights * numGuests;
@@ -73,7 +73,7 @@ function CheckinBooking() {
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
 
-      <BookingDataBox booking={booking.data} />
+      <BookingDataBox booking={booking} />
 
       {!hasBreakfast && (
         <Box>
