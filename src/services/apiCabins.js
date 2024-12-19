@@ -1,14 +1,14 @@
 import {ENDPOINTS} from "../utils/constants.js";
 import axios from "axios";
 import axiosInstance from "./axiosInstance.js";
+import {handleServerError} from "../middleware/errorHandler.js";
 
 export async function getCabins() {
   try {
     const response = await axiosInstance.get(ENDPOINTS.GET_CABINS);
     return response.data.cabins;
   } catch (error) {
-    console.error("Error loading cabins:", error);
-    throw new Error("Cabins could not be loaded");
+    handleServerError(error);
   }
 }
 
@@ -26,8 +26,7 @@ export async function createEditCabin(newCabin) {
 
     return response.data;
   } catch (error) {
-    console.error("Error while creating or editing cabin:", error);
-    throw new Error("Operation could not be completed");
+    handleServerError(error);
   }
 }
 
@@ -37,7 +36,6 @@ export async function deleteCabin(id) {
 
     return response.data.isDeleted;
   } catch (error) {
-    console.error("Error deleting cabin:", error);
-    throw new Error("Cabin could not be deleted");
+    handleServerError(error);
   }
 }
