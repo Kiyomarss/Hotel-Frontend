@@ -16,5 +16,11 @@ export const ENDPOINTS = {
     GET_BOOKINGS_AFTER_DATE: 'Bookings/GetBookingsAfterDate',
     GET_STAYS_AFTER_DATE: 'Bookings/GetStaysAfterDate',
     GET_STAYS_TODAY_ACTIVITY: 'Bookings/GetStaysTodayActivity',
+    ACCOUNT_SIGNUP: 'Account/Signup',
+    ACCOUNT_LOGIN: 'Account/Login',
+    ACCOUNT_LOGOUT: 'Account/Logout',
+    ACCOUNT_Get_CURRENT_USER: 'Account/GetCurrentUser',
+    ACCOUNT_UPDATE_Current_USER: 'Account/UpdateCurrentUser',
+    ACCOUNT_UPDATE_AVATAR: 'Account/UpdateAvatar',
 };
 

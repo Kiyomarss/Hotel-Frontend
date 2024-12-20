@@ -1,75 +1,118 @@
-import supabase, { supabaseUrl } from "./supabase";
+import {BASE_API_URL, ENDPOINTS} from "../utils/constants.js";
+import axiosInstance from "./axiosInstance.js";
 
 export async function signup({ fullName, email, password }) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        fullName,
-        avatar: "",
-      },
-    },
-  });
+  try {
+    const response = await axiosInstance.post(ENDPOINTS.ACCOUNT_SIGNUP, {
+      fullName,
+      email,
+      password,
+    });
 
-  if (error) throw new Error(error.message);
-
-  return data;
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
 }
 
 export async function login({ email, password }) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const response = await axiosInstance.post(ENDPOINTS.ACCOUNT_LOGIN, {
+      email,
+      password,
+    });
 
-  if (error) throw new Error(error.message);
-
-  return data;
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
 }
 
 export async function getCurrentUser() {
-  const { data: session } = await supabase.auth.getSession();
-  if (!session.session) return null;
+  try {
+    const response = await axiosInstance.get(ENDPOINTS.ACCOUNT_Get_CURRENT_USER);
 
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error) throw new Error(error.message);
-  return data?.user;
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
 }
 
 export async function logout() {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw new Error(error.message);
+  try {
+    const response = await axiosInstance.post(ENDPOINTS.ACCOUNT_LOGOUT);
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
 }
 
 export async function updateCurrentUser({ password, fullName, avatar }) {
-  // 1. Update password OR fullName
-  let updateData;
-  if (password) updateData = { password };
-  if (fullName) updateData = { data: { fullName } };
+  let updateData = {};
 
-  const { data, error } = await supabase.auth.updateUser(updateData);
+  if (password) updateData.password = password;
+  if (fullName) updateData.fullName = fullName;
 
-  if (error) throw new Error(error.message);
-  if (!avatar) return data;
+  try {
+    const response = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_Current_USER, updateData, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
 
-  // 2. Upload the avatar image
-  const fileName = `avatar-${data.user.id}-${Math.random()}`;
+    if (response.data.message !== "User updated successfully") {
+      throw new Error("Failed to update user data.");
+    }
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
 
-  const { error: storageError } = await supabase.storage
-    .from("avatars")
-    .upload(fileName, avatar);
+  if (avatar) {
+    try {
+      const formData = new FormData();
+      formData.append("avatar", avatar);
 
-  if (storageError) throw new Error(storageError.message);
+      const uploadResponse = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_AVATAR, formData, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-  // 3. Update avatar in the user
-  const { data: updatedUser, error: error2 } = await supabase.auth.updateUser({
-    data: {
-      avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
-    },
-  });
+      if (uploadResponse.data.avatarPath) {
+        return { avatar: uploadResponse.data.avatarPath };
+      } else {
+        throw new Error("Failed to upload avatar.");
+      }
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.message);
+      } else {
+        throw new Error("An unexpected error occurred while uploading avatar.");
+      }
+    }
+  }
 
-  if (error2) throw new Error(error2.message);
-  return updatedUser;
+  return { message: "User updated successfully." };
 }
