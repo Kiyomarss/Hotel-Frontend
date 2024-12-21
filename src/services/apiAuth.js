@@ -25,8 +25,11 @@ export async function login({ email, password }) {
       email,
       password,
     });
+    const { token, user } = response.data;
 
-    return response.data.user;
+    localStorage.setItem('token', token);
+    
+    return user;
   } catch (error) {
     if (error.response) {
       throw new Error(error.response.data.message);
@@ -71,48 +74,42 @@ export async function updateCurrentUser({ password, fullName, avatar }) {
   if (fullName) updateData.fullName = fullName;
 
   try {
-    const response = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_Current_USER, updateData, {
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    const response = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_Current_USER, updateData);
 
-    if (response.data.message !== "User updated successfully") {
-      throw new Error("Failed to update user data.");
+    let updatedUser = { ...response.data.user };
+
+    if (avatar) {
+      const formData = new FormData();
+      formData.append("avatar", avatar);
+
+      try {
+        const uploadResponse = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_AVATAR, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (uploadResponse.data.avatar) {
+          updatedUser.avatar = uploadResponse.data.avatar;
+        } else {
+          throw new Error("Failed to upload avatar.");
+        }
+      } catch (error) {
+        if (error.response) {
+          throw new Error(error.response.data.message || "An error occurred while uploading avatar.");
+        } else {
+          throw new Error("An unexpected error occurred while uploading avatar.");
+        }
+      }
     }
+
+    return updatedUser;
+
   } catch (error) {
     if (error.response) {
-      throw new Error(error.response.data.message);
+      throw new Error(error.response.data.message || "An error occurred while updating user data.");
     } else {
       throw new Error("An unexpected error occurred.");
     }
   }
-
-  if (avatar) {
-    try {
-      const formData = new FormData();
-      formData.append("avatar", avatar);
-
-      const uploadResponse = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_AVATAR, formData, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (uploadResponse.data.avatarPath) {
-        return { avatar: uploadResponse.data.avatarPath };
-      } else {
-        throw new Error("Failed to upload avatar.");
-      }
-    } catch (error) {
-      if (error.response) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("An unexpected error occurred while uploading avatar.");
-      }
-    }
-  }
-
-  return { message: "User updated successfully." };
 }
