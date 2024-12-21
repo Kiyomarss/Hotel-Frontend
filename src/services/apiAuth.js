@@ -26,7 +26,7 @@ export async function login({ email, password }) {
       password,
     });
 
-    return response.data;
+    return response.data.user;
   } catch (error) {
     if (error.response) {
       throw new Error(error.response.data.message);

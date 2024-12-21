@@ -79,7 +79,7 @@ export async function getStaysAfterDate(date) {
 
 export async function getStaysTodayActivity() {
   try {
-    const response = await axiosInstance.get(ENDPOINTS.GET_STAYS_AFTER_DATE);
+    const response = await axiosInstance.get(ENDPOINTS.GET_STAYS_TODAY_ACTIVITY);
 
     if (response.data.bookings) {
       return response.data.bookings;

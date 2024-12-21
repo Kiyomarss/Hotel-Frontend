@@ -10,7 +10,8 @@ export function useLogin() {
   const { mutate: login, isLoading } = useMutation({
     mutationFn: ({ email, password }) => loginApi({ email, password }),
     onSuccess: (user) => {
-      queryClient.setQueryData(['user'], user.user);
+      // ذخیره فقط اطلاعات کاربر
+      queryClient.setQueryData(['user'], user);
       navigate('/dashboard', { replace: true });
     },
     onError: (err) => {
@@ -19,5 +20,9 @@ export function useLogin() {
     },
   });
 
-  return { login, isLoading };
+  // بازیابی مقدار user
+  const user = queryClient.getQueryData(['user']);
+  const isAuthenticated = user !== null && user !== undefined;
+
+  return { login, isLoading, user, isAuthenticated };
 }

@@ -5,18 +5,17 @@ import FileInput from "../../ui/FileInput";
 import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
-
-import { useUser } from "./useUser";
 import { useUpdateUser } from "./useUpdateUser";
+import {useLogin} from "./useLogin.js";
 
 function UpdateUserDataForm() {
   // We don't need the loading state, and can immediately use the user data, because we know that it has already been loaded at this point
   const {
     user: {
       email,
-      user_metadata: { fullName: currentFullName },
+      fullName: currentFullName,
     },
-  } = useUser();
+  } = useLogin();
 
   const { updateUser, isUpdating } = useUpdateUser();
 

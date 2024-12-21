@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { useUser } from "./useUser";
+import {useLogin} from "./useLogin.js";
+import {BASE_API_URL} from "../../utils/constants.js";
 
 const StyledUserAvatar = styled.div`
   display: flex;
@@ -22,13 +23,13 @@ const Avatar = styled.img`
 `;
 
 function UserAvatar() {
-  const { user } = useUser();
-  const { fullName, avatar } = user.user_metadata;
+  const { user } = useLogin();
+  const { fullName, avatar } = user;
 
   return (
     <StyledUserAvatar>
       <Avatar
-        src={avatar || "default-user.jpg"}
+        src={`${BASE_API_URL}${avatar}` || "default-user.jpg"}
         alt={`Avatar of ${fullName}`}
       />
       <span>{fullName}</span>
