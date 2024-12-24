@@ -67,10 +67,13 @@ export async function logout() {
   }
 }
 
-export async function updateCurrentUser({ password, fullName, avatar }) {
+export async function updateCurrentUser({ password, currentpassword, fullName, avatar }) {
   let updateData = {};
-
-  if (password) updateData.password = password;
+  
+  if (password && currentpassword) {
+    updateData.currentpassword = currentpassword;
+    updateData.password = password;
+  }
   if (fullName) updateData.fullName = fullName;
 
   try {
