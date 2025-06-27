@@ -13,7 +13,7 @@ function UpdateSettingsForm() {
     if (isLoading) return <Spinner />;
     
     const { minBookingLength, maxBookingLength, maxGuestsPerBooking, breakfastPrice } =
-    settings.data;
+    settings;
     function handleSubmit(event) {
         event.preventDefault();
 
@@ -27,7 +27,6 @@ function UpdateSettingsForm() {
 
         updateSetting(updatedSettings);
     }
-
 
   return (
       <Form onSubmit={handleSubmit}>
