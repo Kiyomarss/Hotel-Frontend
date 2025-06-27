@@ -81,8 +81,8 @@ export async function getStaysTodayActivity() {
   try {
     const response = await axiosInstance.get(ENDPOINTS.GET_STAYS_TODAY_ACTIVITY);
 
-    if (response.data.bookings) {
-      return response.data.bookings;
+    if (response.data) {
+      return response.data;
     } else {
       throw new Error("No Bookings found");
     }
