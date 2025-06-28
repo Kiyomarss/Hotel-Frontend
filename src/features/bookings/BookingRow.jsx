@@ -56,8 +56,9 @@ function BookingRow({
     numGuests,
     totalPrice,
     status,
-    guests: { fullName: guestName, email },
-    cabins: { name: cabinName },
+    guestName,
+    email,
+    cabinName,
   },
 }) {
   const navigate = useNavigate();

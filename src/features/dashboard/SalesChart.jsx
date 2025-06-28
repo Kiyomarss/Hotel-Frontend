@@ -31,17 +31,23 @@ function SalesChart({ bookings, numDays }) {
     end: new Date(),
   });
 
-  const data = allDates.map((date) => {
-    return {
-      label: format(date, "MMM dd"),
-      totalSales: bookings
-        .filter((booking) => isSameDay(date, new Date(booking.createdAt)))
-        .reduce((acc, cur) => acc + cur.totalPrice, 0),
-      extrasSales: bookings
-        .filter((booking) => isSameDay(date, new Date(booking.createdAt)))
-        .reduce((acc, cur) => acc + cur.extrasPrice, 0),
-    };
-  });
+    const data = allDates.map((date) => {
+        const dateStr = format(date, "yyyy-MM-dd");
+
+        const totalSales = bookings
+            .filter((booking) => booking.createAt === dateStr)
+            .reduce((acc, cur) => acc + cur.totalPrice, 0);
+
+        const extrasSales = bookings
+            .filter((booking) => booking.createAt === dateStr)
+            .reduce((acc, cur) => acc + cur.extrasPrice, 0);
+
+        return {
+            label: format(date, "MMM dd"),
+            totalSales,
+            extrasSales,
+        };
+    });
 
   const colors = isDarkMode
     ? {
