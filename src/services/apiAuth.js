@@ -1,5 +1,6 @@
 import {BASE_API_URL, ENDPOINTS} from "../utils/constants.js";
 import axiosInstance from "./axiosInstance.js";
+import {handleServerError} from "../middleware/errorHandler.js";
 
 export async function signup({ fullName, email, password }) {
   try {
@@ -114,5 +115,25 @@ export async function updateCurrentUser({ password, currentpassword, fullName, a
     } else {
       throw new Error("An unexpected error occurred.");
     }
+  }
+}
+
+export async function changeUserPassword({ currentPassword, newPassword }) {
+  try {
+    const response = await axiosInstance.post(
+        ENDPOINTS.ACCOUNT_ChangePassword,
+        {
+          currentPassword,
+          newPassword,
+        }
+    );
+
+    if (response.data) {
+      return response.data;
+    } else {
+      throw new Error("Failed to update password");
+    }
+  } catch (error) {
+    handleServerError(error);
   }
 }

@@ -24,12 +24,12 @@ const Avatar = styled.img`
 
 function UserAvatar() {
   const { user } = useLogin();
-  const { fullName, avatar } = user;
+  const { personName: fullName , avatarPath } = user;
 
   return (
     <StyledUserAvatar>
       <Avatar
-        src={`${BASE_API_URL}${avatar}` || "default-user.jpg"}
+        src={`${BASE_API_URL}${avatarPath}` || "default-user.jpg"}
         alt={`Avatar of ${fullName}`}
       />
       <span>{fullName}</span>

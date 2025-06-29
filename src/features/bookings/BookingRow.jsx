@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { format, isToday } from "date-fns";
+import { parse, isToday, format, formatDistanceToNow } from "date-fns";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
@@ -65,6 +65,9 @@ function BookingRow({
   const { checkout, isCheckingOut } = useCheckout();
   const { deleteBooking, isDeleting } = useDeleteBooking();
 
+  const parsedStart = parse(startDate, "M/dd/yyyy h:mm:ss a", new Date());
+  const parsedEnd = parse(endDate, "M/dd/yyyy h:mm:ss a", new Date());
+
   const statusToTagName = {
     unconfirmed: "blue",
     "checked-in": "green",
@@ -82,9 +85,9 @@ function BookingRow({
 
       <Stacked>
         <span>
-          {isToday(new Date(startDate))
+          {isToday(parsedStart)
             ? "Today"
-            : formatDistanceFromNow(startDate)}{" "}
+              : formatDistanceToNow(parsedStart, { addSuffix: true })}
           &rarr; {numNights} night stay
         </span>
         <span>

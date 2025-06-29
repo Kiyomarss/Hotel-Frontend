@@ -4,30 +4,30 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 
-import { useUpdateUser } from "./useUpdateUser";
+import {useUpdatePassword} from "./UseUpdatePassword.js";
 
 function UpdatePasswordForm() {
   const { register, handleSubmit, formState, getValues, reset } = useForm();
   const { errors } = formState;
 
-  const { updateUser, isUpdating } = useUpdateUser();
+  const { updateUser, isUpdating } = useUpdatePassword();
 
-  function onSubmit({ password, currentpassword }) {
-    updateUser({ password, currentpassword }, { onSuccess: reset });
+  function onSubmit({ currentPassword, newPassword }) {
+    updateUser({ currentPassword, newPassword }, { onSuccess: reset });
   }
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
         <FormRow
             label="Current password"
-            error={errors?.currentpassword?.message}
+            error={errors?.currentPassword?.message}
         >
             <Input
                 type="text"
-                id="currentpassword"
+                id="currentPassword"
                 autoComplete="current-password"
                 disabled={isUpdating}
-                {...register("currentpassword", {
+                {...register("currentPassword", {
                     required: "This field is required",
                     minLength: {
                         value: 8,
@@ -38,14 +38,14 @@ function UpdatePasswordForm() {
         </FormRow>
         <FormRow
         label="New password (min 8 chars)"
-        error={errors?.password?.message}
+        error={errors?.newPassword?.message}
       >
         <Input
           type="password"
-          id="password"
+          id="newPassword"
           autoComplete="password"
           disabled={isUpdating}
-          {...register("password", {
+          {...register("newPassword", {
             required: "This field is required",
             minLength: {
               value: 8,
@@ -67,7 +67,7 @@ function UpdatePasswordForm() {
           {...register("passwordConfirm", {
             required: "This field is required",
             validate: (value) =>
-              getValues().password === value || "Passwords need to match",
+              getValues().newPassword === value || "Passwords need to match",
           })}
         />
       </FormRow>
@@ -81,4 +81,4 @@ function UpdatePasswordForm() {
   );
 }
 
-export default UpdatePasswordForm;
+export default  UpdatePasswordForm;

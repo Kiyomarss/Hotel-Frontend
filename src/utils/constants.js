@@ -21,6 +21,7 @@ export const ENDPOINTS = {
     ACCOUNT_LOGOUT: 'Account/Logout',
     ACCOUNT_Get_CURRENT_USER: 'Account/GetCurrentUser',
     ACCOUNT_UPDATE_Current_USER: 'Account/UpdateCurrentUser',
+    ACCOUNT_ChangePassword: 'Account/ChangePassword',
     ACCOUNT_UPDATE_AVATAR: 'Account/UpdateAvatar',
 };
 

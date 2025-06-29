@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { format, isToday } from "date-fns";
+import { parse, isToday, format, formatDistanceToNow } from "date-fns";
 import {
   HiOutlineChatBubbleBottomCenterText,
   HiOutlineCheckCircle,
@@ -104,20 +104,28 @@ const Footer = styled.footer`
 // A purely presentational component
 function BookingDataBox({ booking }) {
   const {
-    createdAt,
-    startDate,
-    endDate,
-    numNights,
-    numGuests,
-    cabinPrice,
-    extrasPrice,
-    totalPrice,
-    hasBreakfast,
-    observations,
-    isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
-    cabins: { name: cabinName },
+    createdAt = new Date().toISOString(), // تاریخ فعلی
+    startDate = "1/1/2025 12:00:00 AM",
+    endDate = "1/2/2025 12:00:00 AM",
+    numNights = 10,
+    numGuests = 10,
+    cabinPrice = 20,
+    extrasPrice = 10,
+    totalPrice = 10,
+    hasBreakfast = false,
+    observations = "",
+    isPaid = false,
+    guestName = "Guest",
+    email = "unknown@example.com",
+    country = "Unknown",
+    countryFlag = "",
+    nationalID = "N/A",
+    cabinName = "Standard Cabin",
   } = booking;
+
+
+  const parsedStart = parse(startDate, "M/dd/yyyy h:mm:ss a", new Date());
+  const parsedEnd = parse(endDate, "M/dd/yyyy h:mm:ss a", new Date());
 
   return (
     <StyledBookingDataBox>
@@ -130,11 +138,11 @@ function BookingDataBox({ booking }) {
         </div>
 
         <p>
-          {format(new Date(startDate), "EEE, MMM dd yyyy")} (
-          {isToday(new Date(startDate))
-            ? "Today"
-            : formatDistanceFromNow(startDate)}
-          ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
+          {format(parsedStart, "EEE, MMM dd yyyy")} (
+          {isToday(parsedStart)
+              ? "Today"
+              : formatDistanceToNow(parsedStart, { addSuffix: true })}
+          ) &mdash; {format(parsedEnd, "EEE, MMM dd yyyy")}
         </p>
       </Header>
 
