@@ -23,5 +23,6 @@ export const ENDPOINTS = {
     ACCOUNT_UPDATE_Current_USER: 'Account/UpdateCurrentUser',
     ACCOUNT_ChangePassword: 'Account/ChangePassword',
     ACCOUNT_UPDATE_AVATAR: 'Account/UpdateAvatar',
+    ACCOUNT_USER_PERSON_NAME: 'Account/UpdatePersonName',
 };
 

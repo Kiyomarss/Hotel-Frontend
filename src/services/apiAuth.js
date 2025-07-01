@@ -68,52 +68,39 @@ export async function logout() {
   }
 }
 
-export async function updateCurrentUser({ password, currentpassword, fullName, avatar }) {
-  let updateData = {};
-  
-  if (password && currentpassword) {
-    updateData.currentpassword = currentpassword;
-    updateData.password = password;
-  }
-  if (fullName) updateData.fullName = fullName;
-
+export async function updateUserPersonName(newPersonName) {
   try {
-    const response = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_Current_USER, updateData);
+    const response = await axiosInstance.post(
+        ENDPOINTS.ACCOUNT_USER_PERSON_NAME,
+        {newPersonName}
+    );
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error changing person name:", error);
+    throw new Error(error.response?.data?.message || "Failed to update name");
+  }
+}
 
-    let updatedUser = { ...response.data.user };
-
+export async function updateUserAvatar({avatar}) {
+  try {
     if (avatar) {
       const formData = new FormData();
       formData.append("avatar", avatar);
 
-      try {
-        const uploadResponse = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_AVATAR, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+      const uploadResponse = await axiosInstance.post(ENDPOINTS.ACCOUNT_UPDATE_AVATAR, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-        if (uploadResponse.data.avatar) {
-          updatedUser.avatar = uploadResponse.data.avatar;
-        } else {
-          throw new Error("Failed to upload avatar.");
-        }
-      } catch (error) {
-        if (error.response) {
-          throw new Error(error.response.data.message || "An error occurred while uploading avatar.");
-        } else {
-          throw new Error("An unexpected error occurred while uploading avatar.");
-        }
-      }
+      return uploadResponse.data;
     }
-
-    return updatedUser;
-
   } catch (error) {
     if (error.response) {
-      throw new Error(error.response.data.message || "An error occurred while updating user data.");
+      throw new Error(error.response.data.message || "An error occurred while uploading avatar.");
     } else {
-      throw new Error("An unexpected error occurred.");
+      throw new Error("An unexpected error occurred while uploading avatar.");
     }
   }
 }
